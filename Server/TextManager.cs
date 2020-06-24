@@ -23,10 +23,10 @@ namespace Server
         }
 
         //Append a new "InGameText" object to the list of text and return it's ID
-        public static void CreateText([FromSource] Player PlayerExecutingCommand, string Text, Vector3 Position)
+        public static void CreateText([FromSource] Player PlayerExecutingCommand, string Text, Vector3 Position, int Size, int Font, int Range)
         {
-            ActiveText.Add(new Utils.InGameText(Position, Text, NextID));
-            PlayerExecutingCommand.TriggerEvent("SimpleText:Client:ShowNotification", $"~g~The text has been spawned! ~s~It got ID: ~b~{NextID++}");
+            ActiveText.Add(new Utils.InGameText(Position, Text, Size, Font, Range, NextID));
+            PlayerExecutingCommand.TriggerEvent("SimpleText:Client:ShowNotification", $"~g~The text has been spawned!");
             UpdateAllTextLists();
         }
 
@@ -42,23 +42,26 @@ namespace Server
             }
             else
             {
-                PlayerExecutingCommand.TriggerEvent("SimpleText:Client:ShowNotification", "~r~The text could not be moved! ~s~You have either entered an invalid ~b~ID~s~ or this text have been ~r~deleted.");
+                PlayerExecutingCommand.TriggerEvent("SimpleText:Client:ShowNotification", "~r~The text could not be moved! ~s~The text might have been deleted so please go back to the list and try again. If this issue persists: please report this to the developer!");
             }
         }
 
         //Find the text with the same ID and change it's text
-        public static void EditText([FromSource] Player PlayerExecutingCommand, int ID, string Text)
+        public static void EditText([FromSource] Player PlayerExecutingCommand, int ID, string Text, int Size, int Font, int Range)
         {
             int index = ActiveText.FindIndex(t => t.ID == ID);
             if (index > -1)
             {
                 ActiveText[index].Text = Text;
+                ActiveText[index].Size = Size;
+                ActiveText[index].Font = Font;
+                ActiveText[index].Range = Range;
                 PlayerExecutingCommand.TriggerEvent("SimpleText:Client:ShowNotification", "~g~The text has been edited!");
                 UpdateAllTextLists();
             }
             else
             {
-                PlayerExecutingCommand.TriggerEvent("SimpleText:Client:ShowNotification", "~r~The text could not be edited! ~s~You have either entered an invalid ~b~ID~s~ or this text have been ~r~deleted.");
+                PlayerExecutingCommand.TriggerEvent("SimpleText:Client:ShowNotification", "~r~The text could not be edited! ~s~The text might have been deleted so please go back to the list and try again. If this issue persists: please report this to the developer!");
             }
         }
 
@@ -74,7 +77,7 @@ namespace Server
             }
             else
             {
-                PlayerExecutingCommand.TriggerEvent("SimpleText:Client:ShowNotification", "~r~The text could not be deleted! ~s~You have either entered an invalid ~b~ID~s~ or this text have already been ~r~deleted.");
+                PlayerExecutingCommand.TriggerEvent("SimpleText:Client:ShowNotification", "~r~The text could not be deleted! ~s~The text might already have been deleted so please go back to the list and try again. If this issue persists: please report this to the developer!");
             }
         }
     }
